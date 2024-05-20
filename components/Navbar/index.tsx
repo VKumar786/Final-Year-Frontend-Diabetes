@@ -32,6 +32,9 @@ const Navbar = () => {
                 <Link href={"/tracking"}>Tracking</Link>
               </li>
               <li>
+                <Link href={"/collection"}>Collection</Link>
+              </li>
+              <li>
                 <Link href={"/info"}>Info</Link>
               </li>
               <li>
@@ -47,6 +50,9 @@ const Navbar = () => {
           <ul className="menu menu-horizontal px-1 md:gap-3">
             <li>
               <Link href={"/tracking"}>Tracking</Link>
+            </li>
+            <li>
+              <Link href={"/collection"}>Collection</Link>
             </li>
             <li>
               <Link href={"/info"}>Info</Link>
