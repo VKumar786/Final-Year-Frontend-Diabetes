@@ -6,7 +6,10 @@ import { IoSpeedometerOutline } from "react-icons/io5";
 import { CiCalendar } from "react-icons/ci";
 import { PiHeartbeat } from "react-icons/pi";
 import { MdOutlineBloodtype } from "react-icons/md";
+import { MdDeleteOutline } from "react-icons/md";
+import { MdOutlineDeleteOutline } from "react-icons/md";
 import { IoBookmarksOutline } from "react-icons/io5";
+import { MdOutlineHealthAndSafety } from "react-icons/md";
 
 const trackingData = [
   {
@@ -71,7 +74,7 @@ const trackingData = [
   },
 ];
 
-const IndexPage = () => {
+const TrackingGraph = () => {
   const data = {
     testInstances: [1, 2, 3, 4, 5],
     pregnancies: [2, 3, 1, 4, 2],
@@ -105,24 +108,40 @@ const IndexPage = () => {
                 document.getElementById("my_modal_2").showModal();
               }}
             >
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2 items-center w-full">
-                  <MdOutlineBloodtype />
-                  {glucose}
+              <div className="w-full">
+                <div className="flex justify-around gap-2">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2 items-center w-full">
+                      <MdOutlineBloodtype />
+                      {glucose}
+                    </div>
+                    <div className="flex gap-2 items-center w-full">
+                      <PiHeartbeat />
+                      {blood_pressure}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2 items-center w-full">
+                      <IoSpeedometerOutline />
+                      {bmi}
+                    </div>
+                    <div className="flex gap-2 items-center w-full">
+                      <CiCalendar />
+                      {new Date(created_at).toLocaleString()}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex gap-2 items-center w-full">
-                  <PiHeartbeat />
-                  {blood_pressure}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2 items-center w-full">
-                  <IoSpeedometerOutline />
-                  {bmi}
-                </div>
-                <div className="flex gap-2 items-center w-full">
-                  <CiCalendar />
-                  {new Date(created_at).toLocaleString()}
+                <div className="border border-gray-300 my-2" />
+                <div className="flex justify-between mt-1">
+                  <div className="flex">
+                    <MdOutlineHealthAndSafety
+                      className={`text-2xl ${
+                        Math.random() ? "fill-green-400" : " fill-red-400"
+                      }`}
+                    />
+                    Not Diabetes
+                  </div>
+                  <MdOutlineDeleteOutline className=" text-2xl text-red-500" />
                 </div>
               </div>
             </div>
@@ -176,4 +195,4 @@ const IndexPage = () => {
   );
 };
 
-export default IndexPage;
+export default TrackingGraph;

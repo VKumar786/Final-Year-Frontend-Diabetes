@@ -5,26 +5,21 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
 import { CiLocationArrow1 } from "react-icons/ci";
-import Link from "next/link";
 
-const Login = () => {
+const ForgotPassword = () => {
   const formik = useFormik({
     initialValues: {
       email: "",
-      password: "",
     },
     validationSchema: Yup.object({
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is Required"),
-      password: Yup.string()
-        .min(8, "Password must be at least 8 characters")
-        .required("Password is Required"),
     }),
     onSubmit: (values, { setSubmitting }) => {
       try {
         console.log(values);
-        toast.success("Login successful!");
+        toast.success("Forgot password email successful!");
       } catch (error) {
         toast.error(
           error?.toString() || "An error occurred. Please try again later."
@@ -73,7 +68,7 @@ const Login = () => {
         </svg>
 
         <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Sign in to your account
+          Forgot Password
         </h2>
       </div>
 
@@ -106,42 +101,6 @@ const Login = () => {
           </div>
 
           <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Password
-              </label>
-              <div className="text-sm">
-                <Link
-                  href={"/forgot-password"}
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-            </div>
-            <div className="mt-2">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-300 sm:text-sm sm:leading-6 outline-none"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.password}
-              />
-              {formik.touched.password && formik.errors.password ? (
-                <div className="text-red-600 text-sm mt-1">
-                  {formik.errors.password}
-                </div>
-              ) : null}
-            </div>
-          </div>
-
-          <div>
             <button
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 gap-2 items-center"
@@ -151,22 +110,13 @@ const Login = () => {
               ) : (
                 <CiLocationArrow1 className="text-xl stroke-1" />
               )}
-              Sign in
+              Send Mail
             </button>
           </div>
         </form>
-        <p className="mt-5 text-center text-sm text-gray-500">
-          Create a account?{" "}
-          <Link
-            href={"/register"}
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          >
-            Register
-          </Link>
-        </p>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default ForgotPassword;

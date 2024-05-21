@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import Input from "./Input";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { CiLocationArrow1 } from "react-icons/ci";
 
 const Home = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [showPregnancies, setShowPregnancies] = useState(false);
   const [data, setData] = useState({
     pregnancies: 0,
@@ -26,18 +28,10 @@ const Home = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
+      setIsLoading(true);
       const url = "https://fastapi-test-jflb.onrender.com/";
 
-      const response = await axios.post(url, {
-        pregnancies: 3,
-        glucose: 150,
-        blood_pressure: 80,
-        skin_thickness: 25,
-        insulin: 100,
-        bmi: 28.5,
-        diabetes_pedigree_function: 0.627,
-        age: 45,
-      });
+      const response = await axios.post(url, data);
 
       if (!response || !response.data)
         throw new Error("No response data received from the server.");
@@ -67,11 +61,16 @@ const Home = () => {
           duration: 7000,
         }
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto pt-3 pb-5 px-5 md:px-10 md:pt-7 md:pb-12 gap-2 flex flex-col">
+      <h2 className="font-semibold text-3xl text-center mb-6 mt-3">
+        Diabetes Prediction System 🤖
+      </h2>
       <form
         method="post"
         onSubmit={handleSubmit}
@@ -113,6 +112,7 @@ const Home = () => {
           placeholder="Glucose"
           value={data.glucose}
           handleChange={handleChange}
+          maxVal={200}
         />
         {/* Blood Pressure */}
         <Input
@@ -121,6 +121,7 @@ const Home = () => {
           placeholder="Blood Pressure"
           value={data.blood_pressure}
           handleChange={handleChange}
+          maxVal={200}
         />
         {/* Blood Pressure */}
         <Input
@@ -129,6 +130,7 @@ const Home = () => {
           placeholder="Skin Thickness"
           value={data.skin_thickness}
           handleChange={handleChange}
+          maxVal={100}
         />
         {/* Insulin */}
         <Input
@@ -137,6 +139,7 @@ const Home = () => {
           placeholder="Insulin"
           value={data.insulin}
           handleChange={handleChange}
+          maxVal={500}
         />
         {/* BMI */}
         <Input
@@ -145,6 +148,7 @@ const Home = () => {
           placeholder="BMI"
           value={data.bmi}
           handleChange={handleChange}
+          maxVal={100}
         />
         {/* Diabetes Pedigree Function */}
         <Input
@@ -153,6 +157,7 @@ const Home = () => {
           placeholder="Diabetes Pedigree Function"
           value={data.diabetes_pedigree_function}
           handleChange={handleChange}
+          maxVal={5}
         />
         {/* Age */}
         <Input
@@ -166,7 +171,11 @@ const Home = () => {
           type="submit"
           className="btn btn-wide btn-primary text-white mt-2"
         >
-          <span className="loading loading-spinner"></span>
+          {isLoading ? (
+            <span className="loading loading-spinner" />
+          ) : (
+            <CiLocationArrow1 className=" text-xl stroke-1" />
+          )}
           Diabetes Test Result
         </button>
       </form>

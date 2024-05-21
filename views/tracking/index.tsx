@@ -1,4 +1,4 @@
-import IndexPage from "@/components/TrackingGraph";
+import TrackingGraph from "@/components/TrackingGraph";
 import React from "react";
 
 const Tracking = () => {
@@ -20,7 +20,7 @@ const Tracking = () => {
           />
         </svg>
       </h2>
-      <IndexPage />
+      <TrackingGraph />
     </div>
   );
 };

@@ -72,7 +72,7 @@ const Navbar = () => {
               <div className="w-10 rounded-full">
                 <Image
                   alt="Tailwind CSS Navbar component"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
                   width={40}
                   height={40}
                 />
@@ -86,6 +86,11 @@ const Navbar = () => {
                 <Link href={"/profile"} className="justify-between">
                   Profile
                   <span className="badge">New</span>
+                </Link>
+              </li>
+              <li>
+                <Link href={"/reset-password"} className="justify-between">
+                  Reset Password
                 </Link>
               </li>
               <li>

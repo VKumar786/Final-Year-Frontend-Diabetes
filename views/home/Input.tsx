@@ -6,12 +6,14 @@ const Input = ({
   placeholder,
   value,
   handleChange,
+  maxVal
 }: {
   label: string;
   name: string;
   placeholder: string;
   value: number;
   handleChange: any;
+  maxVal?: number;
 }) => {
   return (
     <label className="form-control w-full max-w-xl">
@@ -25,6 +27,8 @@ const Input = ({
         value={value}
         name={name}
         onChange={handleChange}
+        min={0}
+        max={maxVal}
       />
     </label>
   );
