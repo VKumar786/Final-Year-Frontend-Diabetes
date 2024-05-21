@@ -4,7 +4,13 @@ import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables);
 
-const DiabetesChart = ({ data, diabetesPrediction }) => {
+const DiabetesChart = ({
+  data,
+  diabetesPrediction,
+}: {
+  data: any;
+  diabetesPrediction: any;
+}) => {
   if (!data.testInstances.length || !diabetesPrediction) {
     return <p>No data available</p>;
   }
@@ -70,16 +76,16 @@ const DiabetesChart = ({ data, diabetesPrediction }) => {
         position: "bottom",
       },
       annotation: {
-        annotations: diabetesPrediction.map((prediction, index) => ({
+        annotations: diabetesPrediction.map((prediction: any, index:number) => ({
           type: "point",
           xValue: data.testInstances[index],
           yValue: data.glucose[index],
-          backgroundColor: "red",
+          backgroundColor: prediction === 1 ? "red" : "transparent",
           radius: 5,
           borderColor: "red",
           borderWidth: 2,
           label: {
-            content: "Diabetes",
+            content: prediction === 1 ? "Diabetes" : "",
             enabled: true,
             position: "top",
           },

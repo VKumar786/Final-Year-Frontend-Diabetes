@@ -72,11 +72,6 @@ const trackingData = [
 ];
 
 const IndexPage = () => {
-  // const [selectedDateRange, setSelectedDateRange] = useState({
-  //   start: null,
-  //   end: null,
-  // });
-
   const data = {
     testInstances: [1, 2, 3, 4, 5],
     pregnancies: [2, 3, 1, 4, 2],
@@ -89,18 +84,11 @@ const IndexPage = () => {
     age: [25, 35, 30, 40, 45],
   };
 
-  const diabetesPrediction = [0, 1, 0, 1, 1]; // Dummy diabetes prediction (1 if diabetes, 0 if not)
-
-  // const handleDateRangeChange = (range) => {
-  //   setSelectedDateRange(range);
-  //   // Add logic to fetch or filter data based on the selected date range
-  //   console.log("Selected date range:", range);
-  // };
+  const diabetesPrediction = [0, 1, 0, 1, 1];
 
   return (
     <div>
       <DiabetesChart data={data} diabetesPrediction={diabetesPrediction} />
-      {/* <DateRangePickerComponent onDateRangeChange={handleDateRangeChange} /> */}
       <h2 className="font-semibold mt-10 text-3xl text-center mb-6 flex items-center gap-2 w-full justify-center">
         Session Entry
         <IoBookmarksOutline />
