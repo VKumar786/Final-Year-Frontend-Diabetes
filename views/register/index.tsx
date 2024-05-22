@@ -23,7 +23,6 @@ const Register = () => {
     }),
     onSubmit: (values, { setSubmitting }) => {
       try {
-        console.log(values);
         toast.success("Register successful!");
       } catch (error) {
         toast.error(

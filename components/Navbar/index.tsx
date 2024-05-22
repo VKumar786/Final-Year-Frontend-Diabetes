@@ -1,8 +1,12 @@
+import { SignOutButton, SignedOut } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const user = await currentUser();
+
   return (
     <div className="shadow-sm">
       <div className="navbar bg-base-100 max-w-7xl mx-auto">
@@ -28,12 +32,16 @@ const Navbar = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-64"
             >
-              <li>
-                <Link href={"/tracking"}>Tracking</Link>
-              </li>
-              <li>
-                <Link href={"/collection"}>Collection</Link>
-              </li>
+              {user && (
+                <>
+                  <li>
+                    <Link href={"/tracking"}>Tracking</Link>
+                  </li>
+                  <li>
+                    <Link href={"/collection"}>Collection</Link>
+                  </li>
+                </>
+              )}
               <li>
                 <Link href={"/info"}>Info</Link>
               </li>
@@ -48,12 +56,16 @@ const Navbar = () => {
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1 md:gap-3">
-            <li>
-              <Link href={"/tracking"}>Tracking</Link>
-            </li>
-            <li>
-              <Link href={"/collection"}>Collection</Link>
-            </li>
+            {user && (
+              <>
+                <li>
+                  <Link href={"/tracking"}>Tracking</Link>
+                </li>
+                <li>
+                  <Link href={"/collection"}>Collection</Link>
+                </li>
+              </>
+            )}
             <li>
               <Link href={"/info"}>Info</Link>
             </li>
@@ -62,42 +74,57 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <div className="navbar-end">
-          <div className="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle avatar"
-            >
-              <div className="w-10 rounded-full">
-                <Image
-                  alt="Tailwind CSS Navbar component"
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
-                  width={40}
-                  height={40}
-                />
+        <div className="navbar-end gap-2">
+          {!user ? (
+            <>
+              <Link href={"/sign-up"}>
+                <button className="btn btn-xs btn-outline btn-neutral">
+                  Sign Up
+                </button>
+              </Link>
+              <Link href={"/sign-in"}>
+                <button className="btn btn-xs btn-active btn-neutral">
+                  Sign In
+                </button>
+              </Link>
+            </>
+          ) : (
+            <div className="dropdown dropdown-end">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost btn-circle avatar"
+              >
+                <div className="w-10 rounded-full">
+                  <Image
+                    src={
+                      user?.imageUrl ||
+                      "https://avatars.githubusercontent.com/u/33460?v=4"
+                    }
+                    alt={`${user?.fullName}'s profile`}
+                    width={40}
+                    height={40}
+                  />
+                </div>
               </div>
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+              >
+                <li>
+                  <Link href={"/profile"} className="justify-between">
+                    Profile
+                    <span className="badge">New</span>
+                  </Link>
+                </li>
+                <li>
+                  <SignOutButton>
+                    <SignedOut />
+                  </SignOutButton>
+                </li>
+              </ul>
             </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-            >
-              <li>
-                <Link href={"/profile"} className="justify-between">
-                  Profile
-                  <span className="badge">New</span>
-                </Link>
-              </li>
-              <li>
-                <Link href={"/reset-password"} className="justify-between">
-                  Reset Password
-                </Link>
-              </li>
-              <li>
-                <span>Logout</span>
-              </li>
-            </ul>
-          </div>
+          )}
         </div>
       </div>
     </div>

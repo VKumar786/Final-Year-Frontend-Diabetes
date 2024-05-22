@@ -1,34 +1,79 @@
 "use client";
+import React, { useState } from "react";
+import { useAuth, useSignIn } from "@clerk/nextjs";
+import type { NextPage } from "next";
+import { useRouter } from "next/navigation";
 
-import React from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import toast from "react-hot-toast";
-import { CiLocationArrow1 } from "react-icons/ci";
+const ForgotPassword: NextPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [successfulCreation, setSuccessfulCreation] = useState(false);
+  const [secondFactor, setSecondFactor] = useState(false);
+  const [error, setError] = useState("");
 
-const ResetPassword = () => {
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-    },
-    validationSchema: Yup.object({
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is Required"),
-    }),
-    onSubmit: (values, { setSubmitting }) => {
-      try {
-        console.log(values);
-        toast.success("Forgot password email successful!");
-      } catch (error) {
-        toast.error(
-          error?.toString() || "An error occurred. Please try again later."
-        );
-      } finally {
-        setSubmitting(false);
-      }
-    },
-  });
+  const router = useRouter();
+  const { isSignedIn } = useAuth();
+  const { isLoaded, signIn, setActive } = useSignIn();
+
+  if (!isLoaded) {
+    return null;
+  }
+
+  // If the user is already signed in,
+  // redirect them to the home page
+  if (isSignedIn) {
+    router.push("/");
+  }
+
+  // Send the password reset code to the user's email
+  async function create(e: React.FormEvent) {
+    e.preventDefault();
+    await signIn
+      ?.create({
+        strategy: "reset_password_email_code",
+        identifier: email,
+      })
+      .then((_) => {
+        setSuccessfulCreation(true);
+        setError("");
+      })
+      .catch((err) => {
+        console.error("error", err.errors[0].longMessage);
+        setError(err.errors[0].longMessage);
+      });
+  }
+
+  // Reset the user's password.
+  // Upon successful reset, the user will be
+  // signed in and redirected to the home page
+  async function reset(e: React.FormEvent) {
+    e.preventDefault();
+    await signIn
+      ?.attemptFirstFactor({
+        strategy: "reset_password_email_code",
+        code,
+        password,
+      })
+      .then((result) => {
+        // Check if 2FA is required
+        if (result.status === "needs_second_factor") {
+          setSecondFactor(true);
+          setError("");
+        } else if (result.status === "complete") {
+          // Set the active session to
+          // the newly created session (user is now signed in)
+          setActive({ session: result.createdSessionId });
+          setError("");
+        } else {
+          console.log(result);
+        }
+      })
+      .catch((err) => {
+        console.error("error", err.errors[0].longMessage);
+        setError(err.errors[0].longMessage);
+      });
+  }
 
   return (
     <div className="flex min-h-5/6 flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -68,55 +113,82 @@ const ResetPassword = () => {
         </svg>
 
         <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Reset Password
+          Forgot Password
         </h2>
       </div>
-
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" onSubmit={formik.handleSubmit}>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Email address
-            </label>
-            <div className="mt-2">
+        <form
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1em",
+          }}
+          onSubmit={!successfulCreation ? create : reset}
+        >
+          {!successfulCreation && (
+            <>
+              <label htmlFor="email">Please provide your email address</label>
               <input
-                id="email"
-                name="email"
                 type="email"
-                autoComplete="email"
+                placeholder="e.g john@doe.com"
                 className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-300 sm:text-sm sm:leading-6 outline-none"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.email}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
-              {formik.touched.email && formik.errors.email ? (
-                <div className="text-red-600 text-sm mt-1">
-                  {formik.errors.email}
-                </div>
-              ) : null}
-            </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 gap-2 items-center"
-            >
-              {formik.isSubmitting ? (
-                <span className="loading loading-spinner" />
-              ) : (
-                <CiLocationArrow1 className="text-xl stroke-1" />
-              )}
-              Send Mail
-            </button>
-          </div>
+              <div>
+                <button
+                  type="submit"
+                  className="flex w-full justify-center rounded-md btn btn-neutral px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 gap-2 items-center"
+                >
+                  Send password reset code
+                </button>
+              </div>
+              {error && <p className="text-red-500">{error}</p>}
+            </>
+          )}
+
+          {successfulCreation && (
+            <>
+              <label htmlFor="password">Enter your new password</label>
+              <input
+                type="password"
+                value={password}
+                placeholder="**********"
+                className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-300 sm:text-sm sm:leading-6 outline-none"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <label htmlFor="password">
+                Enter the password reset code that was sent to your email
+              </label>
+              <input
+                type="text"
+                value={code}
+                placeholder="**********"
+                className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-300 sm:text-sm sm:leading-6 outline-none"
+                onChange={(e) => setCode(e.target.value)}
+              />
+
+              <div>
+                <button
+                  type="submit"
+                  className="flex w-full justify-center rounded-md btn btn-neutral px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 gap-2 items-center"
+                >
+                  Reset
+                </button>
+              </div>
+              {error && <p className="text-red-500">{error}</p>}
+            </>
+          )}
+
+          {secondFactor && (
+            <p>2FA is required, but this UI does not handle that</p>
+          )}
         </form>
       </div>
     </div>
   );
 };
 
-export default ResetPassword;
+export default ForgotPassword;

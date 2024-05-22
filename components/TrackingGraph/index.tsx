@@ -1,111 +1,98 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DiabetesChart from "./DiabetesChart";
 import { IoSpeedometerOutline } from "react-icons/io5";
 import { CiCalendar } from "react-icons/ci";
 import { PiHeartbeat } from "react-icons/pi";
 import { MdOutlineBloodtype } from "react-icons/md";
-import { MdDeleteOutline } from "react-icons/md";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { IoBookmarksOutline } from "react-icons/io5";
-import { MdOutlineHealthAndSafety } from "react-icons/md";
-
-const trackingData = [
-  {
-    testInstances: 1,
-    pregnancies: 2,
-    glucose: 90,
-    blood_pressure: 70,
-    skin_thickness: 20,
-    insulin: 80,
-    bmi: 22.0,
-    diabetes_pedigree_function: 0.5,
-    age: 25,
-    created_at: "2024-05-20T08:00:00Z",
-  },
-  {
-    testInstances: 2,
-    pregnancies: 3,
-    glucose: 180,
-    blood_pressure: 85,
-    skin_thickness: 35,
-    insulin: 130,
-    bmi: 28.5,
-    diabetes_pedigree_function: 0.8,
-    age: 35,
-    created_at: "2024-05-21T08:00:00Z",
-  },
-  {
-    testInstances: 3,
-    pregnancies: 1,
-    glucose: 110,
-    blood_pressure: 80,
-    skin_thickness: 25,
-    insulin: 100,
-    bmi: 24.0,
-    diabetes_pedigree_function: 0.6,
-    age: 30,
-    created_at: "2024-05-22T08:00:00Z",
-  },
-  {
-    testInstances: 4,
-    pregnancies: 4,
-    glucose: 150,
-    blood_pressure: 90,
-    skin_thickness: 30,
-    insulin: 120,
-    bmi: 27.0,
-    diabetes_pedigree_function: 0.75,
-    age: 40,
-    created_at: "2024-05-23T08:00:00Z",
-  },
-  {
-    testInstances: 5,
-    pregnancies: 2,
-    glucose: 200,
-    blood_pressure: 95,
-    skin_thickness: 40,
-    insulin: 150,
-    bmi: 30.0,
-    diabetes_pedigree_function: 0.9,
-    age: 45,
-    created_at: "2024-05-24T08:00:00Z",
-  },
-];
+import Loading from "../Loading";
+import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 const TrackingGraph = () => {
-  const data = {
-    testInstances: [1, 2, 3, 4, 5],
-    pregnancies: [2, 3, 1, 4, 2],
-    glucose: [90, 180, 110, 150, 200],
-    blood_pressure: [70, 85, 80, 90, 95],
-    skin_thickness: [20, 35, 25, 30, 40],
-    insulin: [80, 130, 100, 120, 150],
-    bmi: [22.0, 28.5, 24.0, 27.0, 30.0],
-    diabetes_pedigree_function: [0.5, 0.8, 0.6, 0.75, 0.9],
-    age: [25, 35, 30, 40, 45],
+  const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
+  const [tracks, setTracks] = useState([]);
+  const [track, setTrack] = useState<any>(null);
+  const modalRef = useRef(null);
+
+  const fetchTracks = async () => {
+    const response = await fetch("/api/track");
+    const { tracks = [] } = await response.json();
+    setTracks(tracks);
+    setIsLoading(false);
   };
 
-  const diabetesPrediction = [0, 1, 0, 1, 1];
+  useEffect(() => {
+    fetchTracks();
+  }, []);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!user) {
+    return (
+      <div className="flex flex-1 items-center justify-center flex-col gap-5 text-slate-500 dark:text-slate-400">
+        <p>
+          Oops! It looks like you are not logged in. Please SignIn to view your
+          tracking.
+        </p>
+        <Link href={"/sign-in"}>
+          <button className="btn btn-sm btn-neutral">SignIn</button>
+        </Link>
+      </div>
+    );
+  }
+
+  if (!tracks.length) {
+    return (
+      <div className="flex flex-1 items-center justify-center flex-col gap-5 text-slate-500 dark:text-slate-400">
+        <p>
+          Oops! It looks like your saved products is empty. Start adding items
+          to your saved products and enjoy shopping!
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <DiabetesChart data={data} diabetesPrediction={diabetesPrediction} />
+      <h2 className="font-semibold text-3xl text-center mb-6 flex items-center gap-2 w-full justify-center">
+        Tracking
+        <svg
+          width="30px"
+          height="30px"
+          viewBox="0 0 1024 1024"
+          className="icon"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M927.4 273.5v-95.4h-87.9V82.8h-201v95.3h-87.9v95.4h-78.5v-95.4h-88V82.8H183.2v95.3H95.3v95.4H16.7v190.6h78.6v95.4h75.3v95.3H246v95.3h87.9v95.4h100.5v95.3h153.9v-95.3h100.4v-95.4h88v-95.3H852.1v-95.3h75.3v-95.4h78.5V273.5z"
+            fill="#E02D2D"
+          />
+        </svg>
+      </h2>
+      <DiabetesChart tracks={tracks} />
       <h2 className="font-semibold mt-10 text-3xl text-center mb-6 flex items-center gap-2 w-full justify-center">
         Session Entry
         <IoBookmarksOutline />
       </h2>
       <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4">
-        {trackingData.map((item) => {
-          const { bmi, created_at, blood_pressure, glucose } = item;
+        {tracks.map((item: any) => {
+          const { bmi, blood_pressure, glucose, is_diabetic, createdAt } = item;
           return (
             <div
-              key={created_at + bmi}
+              key={createdAt + bmi + blood_pressure + glucose}
               className="inline-flex justify-between font-medium h-auto py-5 border border-gray-300 px-3 rounded-md hover:bg-gray-50 cursor-pointer"
               onClick={() => {
                 //@ts-ignore
-                document.getElementById("my_modal_2").showModal();
+                modalRef?.current?.showModal();
+                setTrack(item);
               }}
             >
               <div className="w-full">
@@ -127,19 +114,18 @@ const TrackingGraph = () => {
                     </div>
                     <div className="flex gap-2 items-center w-full">
                       <CiCalendar />
-                      {new Date(created_at).toLocaleString()}
+                      {new Date(createdAt).toLocaleString()}
                     </div>
                   </div>
                 </div>
                 <div className="border border-gray-300 my-2" />
                 <div className="flex justify-between mt-1">
-                  <div className="flex">
-                    <MdOutlineHealthAndSafety
-                      className={`text-2xl ${
-                        Math.random() ? "fill-green-400" : " fill-red-400"
-                      }`}
-                    />
-                    Not Diabetes
+                  <div
+                    className={`flex ${
+                      is_diabetic ? "bg-green-400" : " bg-red-400"
+                    } text-white rounded-md px-2`}
+                  >
+                    {is_diabetic ? "Diabetes" : "Not Diabetes"}
                   </div>
                   <MdOutlineDeleteOutline className=" text-2xl text-red-500" />
                 </div>
@@ -148,49 +134,62 @@ const TrackingGraph = () => {
           );
         })}
       </div>
-      <dialog id="my_modal_2" className="modal">
-        <div className="modal-box grid grid-cols-2">
-          <div className="flex gap-2 items-center w-full">
-            <h3 className=" font-semibold">Glucose: </h3>
-            {trackingData[0].glucose}
+      {track && (
+        <dialog ref={modalRef} className="modal">
+          <div className="modal-box grid grid-cols-2">
+            <div className="flex gap-2 items-center w-full">
+              <h3 className=" font-semibold">Glucose: </h3>
+              {track.glucose}
+            </div>
+            <div className="flex gap-2 items-center w-full">
+              <h3 className=" font-semibold">Blood Pressure: </h3>
+              {track.blood_pressure}
+            </div>
+            <div className="flex gap-2 items-center w-full">
+              <h3 className=" font-semibold">BMI: </h3>
+              {track.bmi}
+            </div>
+            <div className="flex gap-2 items-center w-full">
+              <h3 className=" font-semibold">Date: </h3>
+              {new Date(track.createdAt).toLocaleString()}
+            </div>
+            <div className="flex gap-2 items-center w-full">
+              <h3 className=" font-semibold">Age: </h3>
+              {track.age}
+            </div>
+            <div className="flex gap-2 items-center w-full">
+              <h3 className=" font-semibold">Insulin: </h3>
+              {track.insulin}
+            </div>
+            <div className="flex gap-2 items-center w-full">
+              <h3 className=" font-semibold">Skin Thickness: </h3>
+              {track.skin_thickness}
+            </div>
+            <div className="flex gap-2 items-center w-full">
+              <h3 className=" font-semibold">Pregnancies: </h3>
+              {track.pregnancies}
+            </div>
+
+            <div className="flex gap-2 items-center w-full">
+              <h3 className=" font-semibold">Status: </h3>
+              <div
+                className={`flex ${
+                  track.is_diabetic ? "bg-green-400" : " bg-red-400"
+                } text-white rounded-md px-2`}
+              >
+                {track.is_diabetic ? "Diabetes" : "Not Diabetes"}
+              </div>
+            </div>
+            <div className="flex gap-2 items-center w-full col-span-2">
+              <h3 className=" font-semibold">Diabetes Pedigree Function: </h3>
+              {track.diabetes_pedigree_function}
+            </div>
           </div>
-          <div className="flex gap-2 items-center w-full">
-            <h3 className=" font-semibold">Blood Pressure: </h3>
-            {trackingData[0].blood_pressure}
-          </div>
-          <div className="flex gap-2 items-center w-full">
-            <h3 className=" font-semibold">BMI: </h3>
-            {trackingData[0].bmi}
-          </div>
-          <div className="flex gap-2 items-center w-full">
-            <h3 className=" font-semibold">Date: </h3>
-            {new Date(trackingData[0].created_at).toLocaleString()}
-          </div>
-          <div className="flex gap-2 items-center w-full">
-            <h3 className=" font-semibold">Age: </h3>
-            {trackingData[0].age}
-          </div>
-          <div className="flex gap-2 items-center w-full">
-            <h3 className=" font-semibold">Insulin: </h3>
-            {trackingData[0].insulin}
-          </div>
-          <div className="flex gap-2 items-center w-full">
-            <h3 className=" font-semibold">Skin Thickness: </h3>
-            {trackingData[0].skin_thickness}
-          </div>
-          <div className="flex gap-2 items-center w-full">
-            <h3 className=" font-semibold">Pregnancies: </h3>
-            {trackingData[0].pregnancies}
-          </div>
-          <div className="flex gap-2 items-center w-full col-span-2">
-            <h3 className=" font-semibold">Diabetes Pedigree Function: </h3>
-            {trackingData[0].diabetes_pedigree_function}
-          </div>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
+          <form method="dialog" className="modal-backdrop">
+            <button>close</button>
+          </form>
+        </dialog>
+      )}
     </div>
   );
 };

@@ -23,7 +23,6 @@ const Login = () => {
     }),
     onSubmit: (values, { setSubmitting }) => {
       try {
-        console.log(values);
         toast.success("Login successful!");
       } catch (error) {
         toast.error(

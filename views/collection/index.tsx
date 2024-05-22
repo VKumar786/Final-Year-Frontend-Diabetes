@@ -1,8 +1,33 @@
-import Image from "next/image";
-import React from "react";
+"use client";
+
+import Loading from "@/components/Loading";
+import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
+import React, { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 
 const Collection = () => {
+  const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!user) {
+    return (
+      <div className="flex flex-1 items-center my-10 justify-center flex-col gap-5 text-slate-500 dark:text-slate-400">
+        <p>
+          Oops! It looks like you are not logged in. Please SignIn to view your
+          collection.
+        </p>
+        <Link href={"/sign-in"}>
+          <button className="btn btn-sm btn-neutral">SignIn</button>
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white">
       <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-8 gap-y-16 px-4 py-12 sm:px-6 sm:py-16 lg:max-w-7xl lg:grid-cols-2 lg:px-8">

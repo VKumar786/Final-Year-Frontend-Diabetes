@@ -6,7 +6,8 @@ const Input = ({
   placeholder,
   value,
   handleChange,
-  maxVal
+  maxVal,
+  isFloat = false,
 }: {
   label: string;
   name: string;
@@ -14,6 +15,7 @@ const Input = ({
   value: number;
   handleChange: any;
   maxVal?: number;
+  isFloat?: boolean;
 }) => {
   return (
     <label className="form-control w-full max-w-xl">
@@ -27,7 +29,8 @@ const Input = ({
         value={value}
         name={name}
         onChange={handleChange}
-        min={0}
+        min={0.0}
+        step={isFloat ? "any" : "1"}
         max={maxVal}
       />
     </label>

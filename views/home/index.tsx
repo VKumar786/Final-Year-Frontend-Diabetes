@@ -11,12 +11,12 @@ const Home = () => {
   const [showPregnancies, setShowPregnancies] = useState(false);
   const [data, setData] = useState({
     pregnancies: 0,
-    glucose: 0,
-    blood_pressure: 0,
-    skin_thickness: 0,
-    insulin: 0,
-    bmi: 0,
-    diabetes_pedigree_function: 0,
+    glucose: 0.0,
+    blood_pressure: 0.0,
+    skin_thickness: 0.0,
+    insulin: 0.0,
+    bmi: 0.0,
+    diabetes_pedigree_function: 0.0,
     age: 0,
   });
 
@@ -39,6 +39,13 @@ const Home = () => {
         throw new Error(`Unexpected response status: ${response.status}`);
       if (typeof response.data.result === "undefined")
         throw new Error("Missing result in response data.");
+
+      const storeResponse = await axios.post("/api/track", {
+        ...data,
+        is_diabetic: response.data.result === 1,
+      });
+
+      if (storeResponse.data.error) throw new Error(storeResponse.data.error);
 
       if (response.data.result === 0)
         toast.success(
@@ -103,6 +110,7 @@ const Home = () => {
             placeholder="Pregnancies"
             value={data.pregnancies}
             handleChange={handleChange}
+            isFloat={false}
           />
         )}
         {/* Glucose */}
@@ -113,6 +121,7 @@ const Home = () => {
           value={data.glucose}
           handleChange={handleChange}
           maxVal={200}
+          isFloat={true}
         />
         {/* Blood Pressure */}
         <Input
@@ -122,8 +131,9 @@ const Home = () => {
           value={data.blood_pressure}
           handleChange={handleChange}
           maxVal={200}
+          isFloat={true}
         />
-        {/* Blood Pressure */}
+        {/* Skin Thickness */}
         <Input
           name="skin_thickness"
           label="Skin Thickness Value (0 to 100)"
@@ -131,6 +141,7 @@ const Home = () => {
           value={data.skin_thickness}
           handleChange={handleChange}
           maxVal={100}
+          isFloat={true}
         />
         {/* Insulin */}
         <Input
@@ -139,7 +150,8 @@ const Home = () => {
           placeholder="Insulin"
           value={data.insulin}
           handleChange={handleChange}
-          maxVal={500}
+          maxVal={500.0}
+          isFloat={true}
         />
         {/* BMI */}
         <Input
@@ -148,7 +160,8 @@ const Home = () => {
           placeholder="BMI"
           value={data.bmi}
           handleChange={handleChange}
-          maxVal={100}
+          maxVal={100.0}
+          isFloat={true}
         />
         {/* Diabetes Pedigree Function */}
         <Input
@@ -157,7 +170,8 @@ const Home = () => {
           placeholder="Diabetes Pedigree Function"
           value={data.diabetes_pedigree_function}
           handleChange={handleChange}
-          maxVal={5}
+          maxVal={5.0}
+          isFloat={true}
         />
         {/* Age */}
         <Input
@@ -166,10 +180,11 @@ const Home = () => {
           placeholder="Age"
           value={data.age}
           handleChange={handleChange}
+          isFloat={false}
         />
         <button
           type="submit"
-          className="btn btn-wide btn-primary text-white mt-2"
+          className="btn btn-wide btn-neutral text-white mt-2"
         >
           {isLoading ? (
             <span className="loading loading-spinner" />
