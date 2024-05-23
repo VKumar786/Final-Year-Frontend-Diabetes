@@ -9,8 +9,7 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(cuid()) @map("_id")
-  userId   String @unique
+  userId   String @id @map("_id")
   bio      String @default("🐼 My Bio...")
   imageUrl String @default("https://avatars.githubusercontent.com/u/33460?v=4")
   passkey  String @default(cuid())

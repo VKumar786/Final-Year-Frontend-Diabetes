@@ -1,12 +1,27 @@
+"use client";
+
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import PassKey from "./PassKey";
-import { currentUser } from "@clerk/nextjs/server";
 import Loading from "@/components/Loading";
+import axios from "axios";
+import { useUser } from "@clerk/nextjs";
 
-const Profile = async () => {
-  const user = await currentUser();
+const Profile = () => {
+  const [profile, setProfile] = useState<any>(null);
+  const { user } = useUser();
+
+  useEffect(() => {
+    const getUserProfile = async () => {
+      if (user) {
+        const res = await axios.get("/api/user");
+        setProfile(res.data.user);
+      }
+    };
+
+    getUserProfile();
+  }, [user]);
 
   if (!user) return <Loading />;
 
@@ -27,7 +42,7 @@ const Profile = async () => {
             <Image
               className="h-32 w-32 bg-white p-2 rounded-full   "
               src={
-                user?.imageUrl ||
+                profile?.imageUrl ||
                 "https://avatars.githubusercontent.com/u/33460?v=4"
               }
               width={300}
@@ -46,10 +61,12 @@ const Profile = async () => {
                     .toLowerCase()
                     .replace(/[^a-z0-9]/g, "")}
               </div>
-              <p className="mt-2 text-gray-500 text-sm">🐼 My Bio...</p>
+              <p className="mt-2 text-gray-500 text-sm">
+                {profile?.bio || "🐼 My Bio..."}
+              </p>
             </div>
             <hr className="mt-6" />
-            <PassKey text={uuidv4()} />
+            <PassKey text={profile?.passkey || uuidv4()} />
           </div>
         </div>
       </div>

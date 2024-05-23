@@ -1,24 +1,26 @@
+"use client";
+
 import Home from "@/views/home";
-import { currentUser } from "@clerk/nextjs/server";
+import { useUser } from "@clerk/nextjs";
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 
-const HomePage = async () => {
-  const user = await currentUser();
+const HomePage = () => {
+  const { user } = useUser();
 
-  // const response = await axios.post("/api/user", {
-  //   userId: "",
-  // });
+  useEffect(() => {
+    const getUser = async () => {
+      if (user) {
+        const res = await axios.post("/api/user", {
+          imageUrl: user.imageUrl,
+        });
+      }
+    };
 
-  // console.log(response);
+    getUser();
+  }, [user]);
 
-  return (
-    <>
-      {/* <button onClick={handleSubmit}>asdlkfjasdkjf</button> */}
-      {/* Your additional code goes here */}
-      <Home />
-    </>
-  );
+  return <Home />;
 };
 
 export default HomePage;

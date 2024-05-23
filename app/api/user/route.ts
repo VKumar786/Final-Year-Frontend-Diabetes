@@ -4,23 +4,25 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await req.json();
+    const { userId } = auth();
+    const { imageUrl } = await req.json();
 
     if (!userId)
       return NextResponse.json({ error: "Unauthorized", status: 401 });
 
-    // const existingUser = await prisma.user.findUnique({
-    //   where: {
-    //     userId: userId || "",
-    //   },
-    // });
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        userId: userId || "",
+      },
+    });
 
-    // if (existingUser)
-    //   return NextResponse.json({ error: "User already exists", status: 400 });
+    if (existingUser)
+      return NextResponse.json({ error: "User already exists", status: 400 });
 
     const user = await prisma.user.create({
       data: {
-        userId: userId,
+        userId,
+        imageUrl,
       },
     });
 
@@ -34,6 +36,18 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
+    const { userId } = auth();
+
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized", status: 401 });
+
+    const user = await prisma.user.findUnique({
+      where: {
+        userId: userId || "",
+      },
+    });
+
+    return NextResponse.json({ user, status: 200 });
   } catch (error) {
     console.log("Error Getting Tracks", error);
 
