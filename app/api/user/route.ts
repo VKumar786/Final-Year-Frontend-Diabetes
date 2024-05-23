@@ -57,6 +57,29 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   try {
+    const { userId } = auth();
+    const body = await req.json();
+
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized", status: 401 });
+
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        userId: userId || "",
+      },
+    });
+
+    if (!existingUser)
+      return NextResponse.json({ error: "User does not exist", status: 400 });
+
+    const user = await prisma.user.update({
+      where: {
+        userId: userId || "",
+      },
+      data: body,
+    });
+
+    return NextResponse.json({ user, status: 200 });
   } catch (error) {
     console.log("Error Updating Tracks", error);
 

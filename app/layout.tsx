@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "react-hot-toast";
 import { ClerkProvider } from "@clerk/nextjs";
+import LayoutProvider from "./LayoutProvider";
 
 const space_grotest = Space_Grotesk({ subsets: ["latin"] });
 
@@ -21,9 +22,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={space_grotest.className}>
-          <Navbar />
-          {children}
-          <Toaster />
+          <LayoutProvider>
+            <Navbar />
+            {children}
+            <Toaster />
+          </LayoutProvider>
         </body>
       </html>
     </ClerkProvider>

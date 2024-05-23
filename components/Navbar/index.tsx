@@ -1,11 +1,28 @@
-import { SignOutButton, SignedOut } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
+"use client";
+
+import { setProfile } from "@/redux/ProfileSlice";
+import { SignOutButton, SignedOut, useUser } from "@clerk/nextjs";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-const Navbar = async () => {
-  const user = await currentUser();
+const Navbar = () => {
+  const { user } = useUser();
+  const dispatch = useDispatch();
+  const auth = useSelector((state: any) => state.auth);
+
+  const getUserProfile = useCallback(async () => {
+    if (user) {
+      const res = await axios.get("/api/user");
+      dispatch(setProfile(res.data.user));
+    }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    getUserProfile();
+  }, [getUserProfile]);
 
   return (
     <div className="shadow-sm">
@@ -98,10 +115,10 @@ const Navbar = async () => {
                 <div className="w-10 rounded-full">
                   <Image
                     src={
-                      user?.imageUrl ||
+                      auth?.imageUrl ||
                       "https://avatars.githubusercontent.com/u/33460?v=4"
                     }
-                    alt={`${user?.fullName}'s profile`}
+                    alt={`${auth?.fullName}'s profile`}
                     width={40}
                     height={40}
                   />
@@ -119,7 +136,7 @@ const Navbar = async () => {
                 </li>
                 <li>
                   <SignOutButton>
-                    <SignedOut />
+                    <span>Sign Out</span>
                   </SignOutButton>
                 </li>
               </ul>
