@@ -58,10 +58,10 @@ const Profile = () => {
   const handleSubmit = async (e: any) => {
     try {
       e.preventDefault();
-      //@ts-ignore
-      document.getElementById("my_modal_2").close();
       await axios.put("/api/user", data);
 
+      //@ts-ignore
+      document.getElementById("my_modal_2").close();
       await getUserProfile();
 
       toast.success("Profile Updated Successfully");
@@ -72,8 +72,8 @@ const Profile = () => {
 
   return (
     <>
-      <div className="h-screen bg-gray-200 flex flex-wrap items-center justify-center  ">
-        <div className="container relative lg:w-2/6 xl:w-2/7 sm:w-full md:w-2/3 bg-white  shadow-lg    transform   duration-200 easy-in-out">
+      <div className="h-screen bg-gray-200 flex flex-wrap items-center justify-center px-2">
+        <div className="container relative lg:w-2/6 xl:w-2/7 sm:w-full md:w-2/3 shadow-lg transform duration-200 easy-in-out">
           <div
             className=" absolute top-4 right-4 w-10 h-10 bg-white p-2 flex items-center justify-center rounded-full shadow-sm border border-gray-400 cursor-pointer"
             onClick={() => {
@@ -83,7 +83,7 @@ const Profile = () => {
           >
             <MdOutlineModeEdit className=" text-xl" />
           </div>
-          <div className=" h-32 overflow-hidden">
+          <div className=" h-32 overflow-hidden rounded-md">
             <Image
               className="w-full"
               src="https://images.pexels.com/photos/4021779/pexels-photo-4021779.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
@@ -92,7 +92,7 @@ const Profile = () => {
               alt=""
             />
           </div>
-          <div className="flex justify-center px-5 -mt-12">
+          <div className="flex justify-center px-5 -mt-12 bg-white">
             <Image
               className="h-32 w-32 bg-white p-2 rounded-full   "
               src={
@@ -104,23 +104,20 @@ const Profile = () => {
               alt=""
             />
           </div>
-          <div className=" ">
+          <div className="bg-white pt-6">
             <div className="text-center px-14">
               <h2 className="text-gray-800 text-3xl font-bold">
                 {user?.fullName}
               </h2>
               <div className="text-gray-400 mt-2 hover:text-blue-500">
-                {"@" +
-                  (user?.fullName || "")
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]/g, "")}
+                {auth?.email}
               </div>
               <p className="mt-2 text-gray-500 text-sm">
-                {auth?.bio || "🐼 My Bio..."}
+                {auth?.bio || "Bio..."}
               </p>
             </div>
             <hr className="mt-6" />
-            <PassKey text={auth?.passkey || uuidv4()} />
+            <PassKey text={auth?.passkey} />
           </div>
         </div>
 

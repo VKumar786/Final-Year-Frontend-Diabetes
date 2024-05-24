@@ -33,11 +33,9 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ track, status: 201 });
+    return NextResponse.json({ track }, { status: 200 });
   } catch (error) {
-    console.log("Error Creating Tracks", error);
-
-    return NextResponse.json({ error: "Error creating task", status: 500 });
+    return NextResponse.json({ error: "Error creating task" }, { status: 500 });
   }
 }
 
@@ -45,7 +43,7 @@ export async function GET(req: Request) {
   try {
     const { userId } = auth();
     if (!userId)
-      return NextResponse.json({ error: "Unauthorized", status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const tracks = await prisma.track.findMany({
       where: {
@@ -58,28 +56,8 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json({ tracks, status: 200 });
+    return NextResponse.json({ tracks }, { status: 200 });
   } catch (error) {
-    console.log("Error Getting Tracks", error);
-
-    return NextResponse.json({ error: "Error getting task", status: 500 });
-  }
-}
-
-export async function PUT(req: Request) {
-  try {
-  } catch (error) {
-    console.log("Error Updating Tracks", error);
-
-    return NextResponse.json({ error: "Error updating task", status: 500 });
-  }
-}
-
-export async function DELETE(req: Request) {
-  try {
-  } catch (error) {
-    console.log("Error Deleting Tracks", error);
-
-    return NextResponse.json({ error: "Error deleting task", status: 500 });
+    return NextResponse.json({ error: "Error getting task" }, { status: 500 });
   }
 }

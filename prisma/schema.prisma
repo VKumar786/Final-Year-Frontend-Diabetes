@@ -10,9 +10,21 @@ datasource db {
 
 model User {
   userId   String @id @map("_id")
+  email    String @unique
+  name     String
   bio      String @default("🐼 My Bio...")
   imageUrl String @default("https://avatars.githubusercontent.com/u/33460?v=4")
   passkey  String @default(cuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Collection {
+  id      String   @id @default(cuid()) @map("_id")
+  userId  String
+  name    String   @unique
+  records String[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

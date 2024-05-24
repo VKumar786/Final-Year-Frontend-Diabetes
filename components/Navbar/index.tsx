@@ -65,10 +65,14 @@ const Navbar = () => {
               <li>
                 <Link href={"/about"}>About</Link>
               </li>
+              <li>
+                <Link href={"/feedback"}>Feedback</Link>
+              </li>
             </ul>
           </div>
           <Link href={"/"} className="text-sm md:text-xl">
-            Diabetes Prediction 🩺
+            Diabetes Prediction{" "}
+            <span className="hidden sm:inline-block">🩺</span>
           </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
@@ -88,6 +92,9 @@ const Navbar = () => {
             </li>
             <li>
               <Link href={"/about"}>About</Link>
+            </li>
+            <li>
+              <Link href={"/feedback"}>Feedback</Link>
             </li>
           </ul>
         </div>

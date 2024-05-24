@@ -8,11 +8,15 @@ import React, { useEffect } from "react";
 const HomePage = () => {
   const { user } = useUser();
 
+  console.log(user);
+
   useEffect(() => {
     const getUser = async () => {
       if (user) {
         const res = await axios.post("/api/user", {
-          imageUrl: user.imageUrl,
+          imageUrl: user?.imageUrl || "",
+          email: user?.primaryEmailAddress?.emailAddress || "",
+          name: user?.fullName || "",
         });
       }
     };

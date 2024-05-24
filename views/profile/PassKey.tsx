@@ -13,7 +13,7 @@ const PassKey = ({ text }: { text: string }) => {
         window.navigator.clipboard.writeText(text);
       }}
     >
-      <div className="flex justify-between items-center p-4 w-full hover:bg-gray-100 cursor-pointer">
+      <div className="flex justify-between items-center p-4 w-full hover:bg-gray-100 cursor-pointer flex-wrap flex-col sm:flex-row">
         <span className="font-semibold">PassKey </span>
         <p>{text}</p>
         <HiOutlineClipboardDocumentList className=" text-2xl" />

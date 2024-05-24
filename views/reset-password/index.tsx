@@ -20,13 +20,10 @@ const ForgotPassword: NextPage = () => {
     return null;
   }
 
-  // If the user is already signed in,
-  // redirect them to the home page
   if (isSignedIn) {
     router.push("/");
   }
 
-  // Send the password reset code to the user's email
   async function create(e: React.FormEvent) {
     e.preventDefault();
     await signIn
@@ -39,14 +36,10 @@ const ForgotPassword: NextPage = () => {
         setError("");
       })
       .catch((err) => {
-        console.error("error", err.errors[0].longMessage);
         setError(err.errors[0].longMessage);
       });
   }
 
-  // Reset the user's password.
-  // Upon successful reset, the user will be
-  // signed in and redirected to the home page
   async function reset(e: React.FormEvent) {
     e.preventDefault();
     await signIn
@@ -56,21 +49,16 @@ const ForgotPassword: NextPage = () => {
         password,
       })
       .then((result) => {
-        // Check if 2FA is required
         if (result.status === "needs_second_factor") {
           setSecondFactor(true);
           setError("");
         } else if (result.status === "complete") {
-          // Set the active session to
-          // the newly created session (user is now signed in)
           setActive({ session: result.createdSessionId });
           setError("");
         } else {
-          console.log(result);
         }
       })
       .catch((err) => {
-        console.error("error", err.errors[0].longMessage);
         setError(err.errors[0].longMessage);
       });
   }

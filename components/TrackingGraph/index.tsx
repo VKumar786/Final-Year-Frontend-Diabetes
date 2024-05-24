@@ -11,6 +11,7 @@ import { IoBookmarksOutline } from "react-icons/io5";
 import Loading from "../Loading";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import axios from "axios";
 
 const TrackingGraph = () => {
   const { user } = useUser();
@@ -33,6 +34,15 @@ const TrackingGraph = () => {
   if (isLoading) {
     return <Loading />;
   }
+
+  const handleTrackDelete = async (id: string) => {
+    try {
+      await axios.delete(`/api/track/${id}`);
+      fetchTracks();
+    } catch (error) {
+      console.error("Error deleting track:", error);
+    }
+  };
 
   if (!user) {
     return (
@@ -84,19 +94,22 @@ const TrackingGraph = () => {
       </h2>
       <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4">
         {tracks.map((item: any) => {
-          const { bmi, blood_pressure, glucose, is_diabetic, createdAt } = item;
+          const { bmi, blood_pressure, glucose, is_diabetic, createdAt, id } =
+            item;
           return (
             <div
               key={createdAt + bmi + blood_pressure + glucose}
-              className="inline-flex justify-between font-medium h-auto py-5 border border-gray-300 px-3 rounded-md hover:bg-gray-50 cursor-pointer"
-              onClick={() => {
-                //@ts-ignore
-                modalRef?.current?.showModal();
-                setTrack(item);
-              }}
+              className="inline-flex justify-between font-medium h-auto py-5 border border-gray-300 px-3 rounded-md hover:bg-gray-50"
             >
               <div className="w-full">
-                <div className="flex justify-around gap-2">
+                <div
+                  className="flex justify-around gap-2 cursor-pointer"
+                  onClick={() => {
+                    //@ts-ignore
+                    modalRef?.current?.showModal();
+                    setTrack(item);
+                  }}
+                >
                   <div className="flex flex-col gap-2">
                     <div className="flex gap-2 items-center w-full">
                       <MdOutlineBloodtype />
@@ -127,7 +140,10 @@ const TrackingGraph = () => {
                   >
                     {is_diabetic ? "Diabetes" : "Not Diabetes"}
                   </div>
-                  <MdOutlineDeleteOutline className=" text-2xl text-red-500" />
+                  <MdOutlineDeleteOutline
+                    className="text-2xl text-red-500"
+                    onClick={() => handleTrackDelete(id)}
+                  />
                 </div>
               </div>
             </div>
