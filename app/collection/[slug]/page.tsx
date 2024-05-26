@@ -171,14 +171,14 @@ const ParticularCollection = (props: any) => {
 
         <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {(collectionData?.users || [])?.map((item: any) => {
-            const { id, name, email, imageUrl } = item;
+            const { userId, name, email, imageUrl } = item;
             return (
               <div
-                key={id}
+                key={userId}
                 className="rounded-lg bg-gray-50 w-full border border-gray-10 py-4 px-2 flex items-center h-fit justify-between"
               >
                 <Link
-                  href={`/collection/${props.params.slug}/${id}`}
+                  href={`/collection/${props.params.slug}/${userId}`}
                   className="flex items-center gap-2 cursor-pointer"
                 >
                   <Image
@@ -203,7 +203,7 @@ const ParticularCollection = (props: any) => {
                 <div className="flex justify-end mt-3">
                   <MdOutlineDeleteOutline
                     className="text-2xl text-red-500 cursor-pointer"
-                    onClick={() => handleCollectionUserDelete(id)}
+                    onClick={() => handleCollectionUserDelete(userId)}
                   />
                 </div>
               </div>
