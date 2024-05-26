@@ -46,3 +46,10 @@ model Track {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
+
+model Feedback {
+  id      String   @id @default(cuid()) @map("_id")
+  userId  String
+  message String
+  email   String   
+}
