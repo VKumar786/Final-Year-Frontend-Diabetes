@@ -15,6 +15,9 @@ const ParticularUserTracking = (props: any) => {
   const [tracks, setTracks] = useState<any>([]);
   const [track, setTrack] = useState<any>(null);
   const modalRef = useRef(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [warning, setWarning] = useState("");
 
   const fetchData = async () => {
     try {
@@ -31,9 +34,30 @@ const ParticularUserTracking = (props: any) => {
     fetchData();
   }, [props]);
 
+  useEffect(() => {
+    if (startDate && endDate) {
+      if (new Date(endDate) < new Date(startDate)) {
+        setWarning("End date cannot be earlier than start date.");
+      } else {
+        setWarning("");
+      }
+    }
+  }, [startDate, endDate]);
+
+  const filteredTracks = tracks.filter((track: any) => {
+    const trackDate = new Date(track.createdAt);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+
+    if (start && trackDate < start) return false;
+    if (end && trackDate > end) return false;
+    return true;
+  });
+
+
   if (!tracks.length) {
     return (
-      <div className="flex flex-1 items-center justify-center flex-col gap-5 text-slate-500 dark:text-slate-400">
+      <div className="flex mt-5 flex-1 items-center justify-center flex-col gap-5 text-slate-500 dark:text-slate-400">
         <p>
           Oops! It looks like your saved products is empty. Start adding items
           to your saved products and enjoy shopping!
@@ -61,13 +85,28 @@ const ParticularUserTracking = (props: any) => {
             />
           </svg>
         </h2>
-        <DiabetesChart tracks={tracks} />
+        <div className="flex justify-center gap-4 mb-6">
+        <input
+          type="date"
+          className="border rounded p-2"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+        <input
+          type="date"
+          className="border rounded p-2"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
+      </div>
+      {warning && <div className="text-red-500 text-center mb-6">{warning}</div>}
+        <DiabetesChart tracks={filteredTracks} />
         <h2 className="font-semibold mt-10 text-3xl text-center mb-6 flex items-center gap-2 w-full justify-center">
           Session Entry
           <IoBookmarksOutline />
         </h2>
         <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4">
-          {tracks.map((item: any) => {
+          {filteredTracks.map((item: any) => {
             const { bmi, blood_pressure, glucose, is_diabetic, createdAt, id } =
               item;
             return (
